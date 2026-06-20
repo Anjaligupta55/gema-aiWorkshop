@@ -6,6 +6,7 @@ const enquirySchema = new mongoose.Schema(
       type: String,
       required: [true, "Name is required"],
       trim: true,
+      minlength: [3, "Name must be at least 3 characters"],
       maxlength: [50, "Name cannot exceed 50 characters"],
     },
     email: {
@@ -15,7 +16,7 @@ const enquirySchema = new mongoose.Schema(
       lowercase: true,
       match: [
         /^\w+([.-]?\w+)*@\w+([.-]?\w+)*(\.\w{2,3})+$/,
-        "Please fill a valid email address",
+        "Please enter a valid email address",
       ],
     },
     phone: {
@@ -26,11 +27,12 @@ const enquirySchema = new mongoose.Schema(
     },
   },
   {
+    collection: "users",
     timestamps: true,
   }
 );
 
-// Add index on email for querying convenience
+// Index email for query performance
 enquirySchema.index({ email: 1 });
 
 const Enquiry = mongoose.model("Enquiry", enquirySchema);
