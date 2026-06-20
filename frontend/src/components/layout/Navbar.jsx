@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Sun, Moon } from "lucide-react";
 import Button from "../ui/Button";
 import Container from "../ui/Container";
+import useTheme from "../../hooks/useTheme";
 
 const links = [
   {
@@ -25,6 +27,7 @@ const links = [
 function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [theme, toggleTheme] = useTheme();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -40,7 +43,7 @@ function Navbar() {
     setMobileOpen(false);
     const element = document.querySelector(href);
     if (element) {
-      const offset = 80; // height of navbar
+      const offset = 80;
       const bodyRect = document.body.getBoundingClientRect().top;
       const elementRect = element.getBoundingClientRect().top;
       const elementPosition = elementRect - bodyRect;
@@ -57,7 +60,7 @@ function Navbar() {
     <header
       className={`fixed top-0 left-0 z-50 w-full transition-all duration-500 border-b ${
         scrolled
-          ? "bg-white/75 backdrop-blur-md shadow-sm border-slate-200/50 py-3"
+          ? "bg-white/75 backdrop-blur-md shadow-sm border-slate-200/50 py-3 dark:bg-slate-950/75 dark:border-slate-900"
           : "bg-transparent border-transparent py-5"
       }`}
     >
@@ -69,7 +72,7 @@ function Navbar() {
             onClick={(e) => handleScrollTo(e, "#hero")}
             className="group flex flex-col items-start focus:outline-none"
           >
-            <h1 className="text-2xl font-black tracking-tight text-slate-900 leading-none">
+            <h1 className="text-2xl font-black tracking-tight text-slate-900 dark:text-white leading-none">
               Robo<span className="text-indigo-600">Spark</span>
             </h1>
             <span className="mt-1 text-[9px] font-bold tracking-widest uppercase text-slate-400 group-hover:text-indigo-600 transition-colors duration-300">
@@ -78,14 +81,14 @@ function Navbar() {
           </a>
 
           {/* Desktop Navigation */}
-          <div className="hidden items-center gap-8 lg:flex">
+          <div className="hidden items-center gap-6 lg:flex">
             <div className="flex gap-8">
               {links.map((link) => (
                 <a
                   key={link.title}
                   href={link.href}
                   onClick={(e) => handleScrollTo(e, link.href)}
-                  className="relative text-sm font-semibold text-slate-600 transition duration-300 hover:text-indigo-600 focus:outline-none"
+                  className="relative text-sm font-semibold text-slate-600 transition duration-300 hover:text-indigo-600 dark:text-slate-300 dark:hover:text-indigo-400 focus:outline-none"
                 >
                   {link.title}
                 </a>
@@ -102,30 +105,33 @@ function Navbar() {
             </Button>
           </div>
 
-          {/* Mobile Menu Button (Animated Hamburger) */}
-          <button
-            onClick={() => setMobileOpen(!mobileOpen)}
-            className="relative flex h-10 w-10 flex-col items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 focus:outline-none lg:hidden"
-            aria-label="Toggle menu"
-          >
-            <div className="relative flex h-4 w-5 flex-col justify-between">
-              <motion.span
-                animate={mobileOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
-                transition={{ duration: 0.2 }}
-                className="h-0.5 w-5 rounded-full bg-slate-800"
-              />
-              <motion.span
-                animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
-                transition={{ duration: 0.2 }}
-                className="h-0.5 w-5 rounded-full bg-slate-800"
-              />
-              <motion.span
-                animate={mobileOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
-                transition={{ duration: 0.2 }}
-                className="h-0.5 w-5 rounded-full bg-slate-800"
-              />
-            </div>
-          </button>
+          {/* Mobile Navigation Controls */}
+          <div className="flex items-center gap-3 lg:hidden">
+            {/* Mobile Menu Button (Animated Hamburger) */}
+            <button
+              onClick={() => setMobileOpen(!mobileOpen)}
+              className="relative flex h-10 w-10 flex-col items-center justify-center rounded-xl bg-slate-50 hover:bg-slate-100 dark:bg-slate-900 dark:hover:bg-slate-800 focus:outline-none"
+              aria-label="Toggle menu"
+            >
+              <div className="relative flex h-4 w-5 flex-col justify-between">
+                <motion.span
+                  animate={mobileOpen ? { rotate: 45, y: 6 } : { rotate: 0, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-0.5 w-5 rounded-full bg-slate-800 dark:bg-slate-200"
+                />
+                <motion.span
+                  animate={mobileOpen ? { opacity: 0 } : { opacity: 1 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-0.5 w-5 rounded-full bg-slate-800 dark:bg-slate-200"
+                />
+                <motion.span
+                  animate={mobileOpen ? { rotate: -45, y: -6 } : { rotate: 0, y: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="h-0.5 w-5 rounded-full bg-slate-800 dark:bg-slate-200"
+                />
+              </div>
+            </button>
+          </div>
         </nav>
       </Container>
 
@@ -137,7 +143,7 @@ function Navbar() {
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
             transition={{ duration: 0.3, ease: "easeInOut" }}
-            className="overflow-hidden border-t border-slate-100 bg-white/95 backdrop-blur-lg lg:hidden"
+            className="overflow-hidden border-t border-slate-100 dark:border-slate-800 bg-white/95 dark:bg-slate-950/95 backdrop-blur-lg lg:hidden"
           >
             <Container className="py-6">
               <div className="flex flex-col gap-5">
@@ -146,12 +152,12 @@ function Navbar() {
                     key={link.title}
                     href={link.href}
                     onClick={(e) => handleScrollTo(e, link.href)}
-                    className="text-base font-semibold text-slate-600 transition hover:text-indigo-600 py-1"
+                    className="text-base font-semibold text-slate-600 dark:text-slate-300 transition hover:text-indigo-600 dark:hover:text-indigo-400 py-1"
                   >
                     {link.title}
                   </a>
                 ))}
-                <div className="border-t border-slate-100 pt-4 mt-2">
+                <div className="border-t border-slate-100 dark:border-slate-800 pt-4 mt-2">
                   <Button
                     variant="primary"
                     showArrow={false}

@@ -1,21 +1,47 @@
 import { useEffect, useRef, useState } from "react";
-import { useScroll, useMotionValueEvent, useTransform, motion } from "framer-motion";
+import { useScroll, useMotionValueEvent, useTransform, useSpring, motion } from "framer-motion";
 
 export default function BackgroundRobotAnimation() {
   const canvasRef = useRef(null);
   const { scrollYProgress } = useScroll();
+
+  // Local state to monitor the document's dark mode class
+  const [isDark, setIsDark] = useState(() =>
+    document.documentElement.classList.contains("dark")
+  );
+
+  // Sync state with HTML class updates using a MutationObserver
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setIsDark(document.documentElement.classList.contains("dark"));
+    });
+
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["class"],
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
   const [images, setImages] = useState([]);
   const [loadedCount, setLoadedCount] = useState(0);
-
   const totalFrames = 240;
 
-  // Spatial Parallax Transforms mapping scroll progress to screen position and scale
-  const yVal = useTransform(scrollYProgress, [0, 1], ["0px", "-120px"]);
-  const xVal = useTransform(scrollYProgress, [0, 0.5, 1], ["30px", "0px", "-30px"]);
-  const scaleVal = useTransform(scrollYProgress, [0, 0.5, 1], [0.98, 1.05, 0.98]);
+  // Smooth out raw scroll progression using a spring for momentum scroll glide
+  const smoothProgress = useSpring(scrollYProgress, {
+    stiffness: 45,
+    damping: 22,
+    restDelta: 0.0005,
+  });
+
+  // Spatial Parallax Transforms mapping smooth progress to screen position and scale
+  const yVal = useTransform(smoothProgress, [0, 1], ["0px", "-120px"]);
+  const xVal = useTransform(smoothProgress, [0, 0.5, 1], ["30px", "0px", "-30px"]);
+  const scaleVal = useTransform(smoothProgress, [0, 0.5, 1], [0.98, 1.05, 0.98]);
   
   // Dynamic opacity curve (bright and highly visible in background)
-  const opacityVal = useTransform(scrollYProgress, [0, 0.25, 0.75, 1], [0.6, 0.85, 0.85, 0.4]);
+  const opacityVal = useTransform(smoothProgress, [0, 0.25, 0.75, 1], [0.6, 0.85, 0.85, 0.4]);
 
   // Preload all 240 robot frames
   useEffect(() => {
@@ -99,7 +125,7 @@ export default function BackgroundRobotAnimation() {
   }, [images]);
 
   // Update canvas frames as the user scrolls
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+  useMotionValueEvent(smoothProgress, "change", (latest) => {
     const frameIndex = Math.min(
       totalFrames,
       Math.max(1, Math.floor(latest * totalFrames))
@@ -121,8 +147,12 @@ export default function BackgroundRobotAnimation() {
         y: yVal,
         x: xVal,
         scale: scaleVal,
-        opacity: opacityVal,
-        mixBlendMode: "multiply",
+        opacity: isDark ? 0.28 : opacityVal,
+        mixBlendMode: isDark ? "screen" : "multiply",
+        filter: isDark
+          ? "invert(0.93) hue-rotate(180deg) brightness(1.2) contrast(1.05)"
+          : "none",
+        transition: "filter 0.3s ease, opacity 0.3s ease",
       }}
       className="fixed inset-0 -z-10 h-full w-full pointer-events-none"
     />

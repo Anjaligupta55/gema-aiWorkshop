@@ -2,6 +2,7 @@
 
 html {
   scroll-behavior: smooth;
+  transition: background-color 0.3s ease;
 }
 
 body {
@@ -9,6 +10,7 @@ body {
   background: #FFFFFF;
   font-family: "Inter", sans-serif;
   color: #0F172A;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 * {
@@ -18,4 +20,67 @@ body {
 ::selection {
   background: #4f46e5;
   color: white;
+}
+
+/* Dark Mode Theme Overrides */
+.dark body {
+  background: #090D16;
+  color: #F8FAFC;
+}
+
+/* Custom 3D canvas color inversion in dark mode */
+.dark canvas {
+  filter: invert(0.93) hue-rotate(180deg) brightness(1.2) contrast(1.05);
+  mix-blend-mode: screen !important;
+  opacity: 0.28 !important;
+}
+
+/* Card & Background Overrides in Dark Mode */
+.dark .bg-white\/75,
+.dark .bg-white\/70,
+.dark .bg-white\/80,
+.dark .bg-white\/60,
+.dark .bg-white {
+  background-color: rgba(17, 24, 39, 0.75) !important;
+  border-color: rgba(75, 85, 99, 0.2) !important;
+}
+
+.dark .text-slate-900,
+.dark .text-slate-800 {
+  color: #F8FAFC !important;
+}
+
+.dark .text-slate-600,
+.dark .text-slate-500 {
+  color: #94A3B8 !important;
+}
+
+.dark .border-slate-200\/50,
+.dark .border-slate-200\/60,
+.dark .border-slate-100 {
+  border-color: rgba(75, 85, 99, 0.2) !important;
+}
+
+.dark .bg-slate-50,
+.dark .bg-slate-50\/50,
+.dark .bg-indigo-50,
+.dark .bg-indigo-50\/50 {
+  background-color: #1F2937 !important;
+  border-color: rgba(75, 85, 99, 0.2) !important;
+  color: #E2E8F0 !important;
+}
+
+.dark .text-slate-400 {
+  color: #64748B !important;
+}
+
+.dark input {
+  background-color: #0B0F19 !important;
+  border-color: rgba(75, 85, 99, 0.3) !important;
+  color: #FFFFFF !important;
+}
+
+.dark footer {
+  background-color: #060910 !important;
+  border-top-color: rgba(75, 85, 99, 0.15) !important;
 }
